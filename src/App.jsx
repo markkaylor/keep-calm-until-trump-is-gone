@@ -11,6 +11,8 @@ function App() {
     seconds: 0,
   });
 
+  const [treeCount, setTreeCount] = useState(0); // State for tree count
+
   useEffect(() => {
     const endDate = new Date("2029-01-20T00:00:00"); // End of term
 
@@ -53,8 +55,38 @@ function App() {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const emojis = ['🌲', '🌳', '🌴', '🌵'];
+
+    const handleClick = (e) => {
+      // Check if the click is not on the iframe
+      if (!e.target.closest('iframe')) {
+        const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+        const x = e.clientX;
+        const y = e.clientY;
+
+        const emojiElement = document.createElement('div');
+        emojiElement.style.position = 'absolute';
+        emojiElement.style.left = `${x}px`;
+        emojiElement.style.top = `${y}px`;
+        emojiElement.style.fontSize = '24px';
+        emojiElement.textContent = emoji;
+        document.body.appendChild(emojiElement);
+
+        setTreeCount((prevCount) => prevCount + 1); // Increment tree count
+      }
+    };
+
+    document.addEventListener('click', handleClick);
+
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen text-gray-700 ">
+      <div className="absolute top-0 left-0 m-4 text-gray-500 font-bold">Trees: {treeCount} / 1 billion</div>
       <h1 className="text-6xl font-extrabold mb-8 text-center">
         Keep Calm Until Trump Is Gone
       </h1>
